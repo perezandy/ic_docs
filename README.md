@@ -19,10 +19,7 @@ Completed work towards having an online documentation as of 11/24/23 is:
 
 There is one known bug: User must refresh when switching pages, and content doesn't update dynamically.
 
-Completed work towards having an online documentation as of 1/27/24 is:
+Completed work towards having an online documentation as of 1/15/24 is:
 
 1. Moved everything to use the Angular framework, as opposed to Leptos. This is mainly for material and resources available online - of which Leptos is lacking.
 2. Moving frameworks successfully fixed the refresh bug.
-3. Made application more intuitive on several screen sizes.
-4. Made not yet implemented links redirect to the 404 page.
-5. Succesfully hosted the application at https://perezandy.github.io/ic_docs/.
