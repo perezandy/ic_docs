@@ -23,3 +23,18 @@ Completed work towards having an online documentation as of 1/15/24 is:
 
 1. Moved everything to use the Angular framework, as opposed to Leptos. This is mainly for material and resources available online - of which Leptos is lacking.
 2. Moving frameworks successfully fixed the refresh bug.
+
+
+
+
+
+
+To build this website locally:
+1. Install Node.js (https://nodejs.org/en)
+2. Install the Angular CLI with the following command: ```npm install -g @angular/cli```
+3. Clone this repository
+4. Navigate to the folder containing these files, and initialize the CSS library:
+   ```npm install -D tailwindcss postcss autoprefixer```
+   ```npx tailwindcss init```
+5. Run ```ng serve```, which returns a localhost link of the current build.
+
