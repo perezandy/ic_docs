@@ -1,0 +1,53 @@
+<html class = "font-sans bg-secondary" style="overflow-y: auto;">
+    <head></head>
+    <body class="flex flex-row">
+        <div class= "bg-primary text-white px-8 py-4 rounded-b-lg h-screen">
+            <h2 class="text-2xl font-bold mb-4">Custom Board Tutorial</h2>
+            <p><a routerLink="/home" class="hover:underline text-white-500 gap-4">Back to Home</a></p>
+        </div>
+        <div class="px-16 py-4 flex flex-col">
+            <div>
+                <h2 class="text-2xl font-bold mb-4">Contributing to Iron Coder</h2>
+            </div>
+            <div class="lg:flex lg:flex-row">
+                <div>
+                    <p>
+                        In this tutorial, we will cover how to create a custom board for Iron Coder.<br/>
+                        If this is something that interests you, great! Iron Coder, as an open source <br/>
+                        project, welcomes collaboration and we are eager to see it grow from <br/>
+                        community effort.<br/> 
+                        <br/>
+                        With that being said, lets get started. The first step is to clone the <br/>
+                        repository, and navigate to the folder titled <q>iron-coder-boards</q>, as shown here:
+                    </p>
+                    <div class ="flex flex-row gap-2">
+                        <img src="assets/boards_tutorial/folder.png" alt = "The 'iron-coder-boards' folder (closed)" class="my-5 h-auto max-w-full rounded-lg" width=230 height=250/>
+                        <img src="assets/boards_tutorial/folder_open.png" alt = "The 'iron-coder-boards' folder (opened)" class="my-5 h-auto max-w-full rounded-lg" width=200 height=250/>
+                    </div>
+                    <p>
+                        We notice nested folders of format <i>Manufacturer/Board/source files</i>. When <br/>
+                        creating your own board, follow this layout, as that is where the application will <br/>
+                        search. As of writing this tutorial, Iron Coder supports Adafruit and Sparkfun boards, <br/>
+                        but this is by no means a restriction! More boards are planned, and you are welcome <br/>
+                        to develop for Manufacturers not listed.     
+                    </p>
+                </div>
+                <div class="lg:px-16"> <!-- second row-->
+                    <p>
+                        The best way to develop your own board is to open one of the given boards and emulate <br/>
+                        their format but with a custom board's contents. One of the notable artifacts necessary <br/>
+                        for an Iron Coder board is the SVG file, which is a layered image format used for <br/>
+                        determining where the pins are in the connection menu. There are many tools online, but <br/>
+                        the provided boards used InkScape for this purpose. <br/> <br/>
+
+                        This concludes the tutorial. We wish you the best of luck, and invite you to open a pull request! 
+
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    
+   
+    </body>
+</html>
