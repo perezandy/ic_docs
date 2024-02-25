@@ -1,0 +1,101 @@
+<main class ="h-screen flex flex-col bg-secondary">
+<header class="bg-primary p-4 text-white text-center justify-center w-screen">
+  <h1 class="text-2xl font-semibold">Welcome to Iron Coder!</h1>
+</header>
+<div class ="h-screen flex flex-col justify-center items-center">    
+  <div class="bg-tertiary text-center text-white text-lg justify-center w-11/12 max-w-lg py-2">
+    <h2>Sign Up</h2>
+  </div>
+
+    <form
+      class="bg-accent p-5 md:p-10 flex flex-col w-11/12 max-w-lg group"
+      novalidate
+      action = "/signup"
+      method="post"
+      [formGroup]="signupForm" 
+    >
+
+    <label for="email" class="mb-5">
+      <span>Email</span>
+      <input
+        [(ngModel)]="email" 
+        type="email"
+        name="email"
+        id="email"
+        class="w-full bg-secondary p-3 mt-2 appearance-none outline-none text-neutral-800 peer invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+        placeholder=" "
+        required
+        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+        formControlName="emailControl"
+      />
+      <span class="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+        Please enter a valid email address
+      </span>
+    </label>
+
+    <label for="username" class="mb-5">
+      <span>Username</span>
+      <input
+        [(ngModel)]="username" 
+        type="username"
+        name="username"
+        id="username"
+        class="w-full bg-secondary p-3 mt-2 appearance-none outline-none text-neutral-800 peer invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+        placeholder=" "
+        required
+        pattern="^(?=.*[a-zA-Z0-9_$])[\w$]{4,}$"
+        formControlName="userControl"
+      />
+      <span class="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+        Please enter a valid username
+      </span>
+    </label>
+
+
+    <label for="password" class="mb-5">
+      <span>Password</span>
+      <input
+        [(ngModel)]="password" 
+        type="password"
+        name="password"
+        id="password"
+        class="w-full bg-secondary p-3 mt-2 appearance-none outline-none text-neutral-800 invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+        placeholder=" "
+        required
+        pattern=".{7,}"
+        formControlName="passwordControl"
+
+      />
+    </label>
+    <label for="confirmpassword" class="mb-5">
+      <span>Confirm Password</span>
+      <input
+        type="password"
+        name="confirmpassword"
+        id="confirmpassword"
+        class="w-full bg-secondary p-3 mt-2 appearance-none outline-none text-neutral-800 invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+        placeholder=" "
+        required
+        pattern=".{7,}"
+        [(ngModel)]="passwordconfirm" 
+        formControlName="confirmPasswordControl"
+      />
+
+    </label>
+
+    <div *ngIf="signupForm.errors?.['passwordMismatch'] && !signupForm.get('passwordControl')?.hasError('required')" class="text-sm text-red-500 mt-1">Passwords must match</div>
+
+    
+    <div *ngIf="isError" class="text-sm text-red-500 mt-1"> User already exists </div>
+    <div *ngIf="isSuccess" class="text-sm text-green-500 mt-1"> Signup successful! </div>
+
+    <button type="submit" class ="mt-5 bg-primary py-3 rounded-md text-white  "(click)="submit()" [disabled] = "submissionNotReady()" [class.button-disabled]="submissionNotReady()">Submit</button>
+
+
+    
+    
+    <a routerLink="/login" class="inline-block align-baseline text-sm text-gray-700 hover:text-tertiary hover:underline py-2 ">Back to login</a>
+  </form>
+
+</div>
+</main>

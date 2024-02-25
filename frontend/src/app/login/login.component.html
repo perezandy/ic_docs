@@ -1,0 +1,67 @@
+
+
+<main class="h-screen flex flex-col bg-secondary">
+
+  <header class="bg-primary p-4 text-white text-center justify-center w-screen">
+    <h1 class="text-2xl font-semibold">Welcome to Iron Coder!</h1>
+  </header>
+
+  <div class ="h-screen flex flex-col justify-center items-center">    
+    <div class="bg-tertiary text-center text-white text-lg justify-center w-11/12 max-w-lg py-2">
+      <h2>Login</h2>
+    </div>
+
+      <form
+        class="bg-accent p-5 md:p-10 flex flex-col w-11/12 max-w-lg group"
+        novalidate
+        action = "/login"
+        method="post"
+        [formGroup]="loginForm"
+
+      >
+
+      <label for="username" class="mb-5">
+        <span>Username</span>
+        <input
+          [(ngModel)]="username" 
+          type="username"
+          name="username"
+          id="username"
+          class="w-full bg-secondary p-3 mt-2 appearance-none outline-none text-neutral-800 peer invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+          placeholder=" "
+          formControlName="userControl"
+
+          required
+        />
+        <span class="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+          Please enter a valid email address
+        </span>
+      </label>
+      <label for="password" class="mb-5">
+        <span>Password</span>
+        <input
+          [(ngModel)]="password" 
+          type="password"
+          name="password"
+          id="password"
+          class="w-full bg-secondary p-3 mt-2 appearance-none outline-none text-neutral-800 invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+          placeholder=" "
+          required
+          formControlName="passwordControl"
+
+          pattern=".{7,}"
+        />
+      </label>
+      <button type="submit" class ="mt-5 bg-primary py-3 rounded-md text-white group-invalid:pointer-events-none group-invalid:opacity-30" (click)="submit()">Submit</button>
+      
+      <div *ngIf="isSuccess" class="text-sm text-green-500 mt-1">Login successful</div>
+      
+      <a routerLink="/signup" class="inline-block align-baseline text-sm text-gray-700 hover:text-tertiary hover:underline py-2 ">New to Iron Coder? Sign up here.</a>
+
+      <div class="border-t border-neutral-500 my-5 items-center justify-center"></div>
+      <button type="button" routerLink="/home" class="bg-primary py-3 rounded-md text-white">Continue as Guest</button>
+
+    </form>
+
+  </div>
+</main>
