@@ -1,7 +1,7 @@
 <html class = "font-sans bg-secondary" style="overflow-y: auto;">
     <head></head>
     <body class="flex flex-row">
-        <div class= "bg-primary text-white px-8 py-4 rounded-b-lg h-screen">
+        <div class= "w-1/2 bg-primary text-white px-8 py-4 rounded-b-lg h-screen">
             <h2 class="text-2xl font-bold mb-4">Custom Board Tutorial</h2>
             <p><a routerLink="/home" class="hover:underline text-white-500 gap-4">Back to Home</a></p>
         </div>
@@ -10,7 +10,7 @@
                 <h2 class="text-2xl font-bold mb-4">Contributing to Iron Coder</h2>
             </div>
             <div class="lg:flex lg:flex-row">
-                <div>
+                <div class="w-1/2">
                     <p>
                         In this tutorial, we will cover how to create a custom board for Iron Coder.<br/>
                         If this is something that interests you, great! Iron Coder, as an open source <br/>
@@ -27,22 +27,35 @@
                     <p>
                         We notice nested folders of format <i>Manufacturer/Board/source files</i>. When <br/>
                         creating your own board, follow this layout, as that is where the application will <br/>
-                        search. As of writing this tutorial, Iron Coder supports Adafruit and Sparkfun boards, <br/>
-                        but this is by no means a restriction! More boards are planned, and you are welcome <br/>
-                        to develop for Manufacturers not listed.     
+                        search. As of writing this tutorial, Iron Coder supports Adafruit and Sparkfun <br/>
+                        boards, but this is by no means a restriction! More boards are planned, and you<br/>
+                        are welcome to develop for Manufacturers not listed.     
                     </p>
                 </div>
-                <div class="lg:px-16"> <!-- second row-->
+                <div class=" w-1/2"> <!-- second row-->
                     <p>
                         The best way to develop your own board is to open one of the given boards and emulate <br/>
                         their format but with a custom board's contents. One of the notable artifacts necessary <br/>
                         for an Iron Coder board is the SVG file, which is a layered image format used for <br/>
                         determining where the pins are in the connection menu. There are many tools online, but <br/>
-                        the provided boards used InkScape for this purpose. <br/> <br/>
-
-                        This concludes the tutorial. We wish you the best of luck, and invite you to open a pull request! 
-
+                        the provided boards used InkScape for this purpose. <br/><br/> 
+                        There are some prerequisites for the formatting of the SVG file. These guidelines should <br/>
+                        be sufficient: <br/><br/>
                     </p>
+                    
+                    <ol class="bg-accent px-4 py-4 space-y-4 rounded-b-lg ">
+                        <li>1. Ensure that the image size is not too large.</li>
+                        <li>2. The units should be in mm.</li>
+                        <li>3. All transforms have been removed and the units of all elements are absolute.</li>
+                        <li>4. All paths that should be displayed in Iron Coder have element IDs equal to those in the board pinouts.</li>
+                    </ol>
+
+
+                    <p class="py-8"> For more specifics as to how SVG files are read in Iron Coder, refer to the source code at "src/board/svg_reader.rs". Once the above has been ensured, place the corresponding SVG file in the associated template 
+                        folder of the corresponding board. The egui library will then be able to parse the contents of the file 
+                        for proper display in Iron Coder. <br/><br/>This concludes the tutorial. We wish you the best of luck, and invite you to open a pull request! </p>
+
+                    
 
                 </div>
             </div>
