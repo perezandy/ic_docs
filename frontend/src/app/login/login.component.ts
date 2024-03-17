@@ -42,9 +42,8 @@ export class LoginComponent {
 
 
 
-  submit() {
-
-      fetch('http://localhost:3000/login', { // TODO: Replace with URL of API login() function
+  submit() {    
+    fetch('http://localhost:3000/login', { // TODO: Replace with URL of API login() function
       headers: {
         'content-type': ' application/json',
       },
@@ -55,8 +54,6 @@ export class LoginComponent {
       }),
     })
     .then((res) => {
-
-    
       if(res.status == 401){
         console.log("Invalid Username or Password");
         this.isLoading = false;
@@ -66,17 +63,30 @@ export class LoginComponent {
       else if(res.status == 200){
         this.isLoading = false;
         this.isSuccess = true;
-        console.log("Successful login");
+
+
+        res.json().then((data) => {
+          const token = data.token; 
+          localStorage.clear();
+          localStorage.setItem('token', token);
+          this.router.navigate(['/home']);
+
+        }).catch((error) => {
+          console.error('Could not get JWT. Error: ', error);
+        });
+
+        
+
       }
       else{
         console.log(res);
-        //this.router.navigate([{ outlets: { home: ['home'] } }]);
        
 
       }
       
      
     })
+    
     .catch((err) => {
       this.isLoading = false;
       this.isError = true;
@@ -96,5 +106,9 @@ export class LoginComponent {
     this.isSuccess = false;
     this.isError = false;
     this.isLoading = false;
+  }
+  GuestSubmit(){
+    localStorage.clear();
+    this.router.navigate(['/home']);
   }
 }

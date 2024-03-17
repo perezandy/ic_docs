@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// Define a route for handling signup requests
+
 app.post('/signup', async (req, res) => {
   // Extract data from the request body
   const { email, username, password } = req.body;
@@ -61,40 +61,34 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-//login requests
 app.post('/login', async (req, res) => {
+
     const { username, password } = req.body;
-    console.log('Received username:', username);
-    console.log('Received password:', password);
-
-
+    
     try {
-      // Find user by username
+
       const user = await User.findOne({ username });
       if (!user) {
         return res.status(401).json({ message: 'Invalid username or password'});
       }
-  
-      // Verify password
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         return res.status(401).json({ message: 'Invalid username or password' });
       }
-  
-      // Generate JWT token
       const token = jwt.sign({ userId: user._id, username: user.username }, secretkey);
-  
-      // Return token to the client
       res.status(200).json({ token });
+
     } catch (error) {
       console.error('Error during login:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
-  });
+});
 
 
 
-// Start the server
+
+
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

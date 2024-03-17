@@ -15,6 +15,7 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { ForgotComponent } from './forgot/forgot.component';
 import { Rp2040Component } from './rp2040/rp2040.component';
+import { PfpComponent } from './pfp/pfp.component';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { Rp2040Component } from './rp2040/rp2040.component';
     ForgotComponent,
     BoardtutorialComponent,
     Rp2040Component,
+    PfpComponent,
   ],
   imports: [
     FormsModule,

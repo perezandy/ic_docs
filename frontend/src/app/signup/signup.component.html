@@ -86,8 +86,10 @@
     <div *ngIf="signupForm.errors?.['passwordMismatch'] && !signupForm.get('passwordControl')?.hasError('required')" class="text-sm text-red-500 mt-1">Passwords must match</div>
 
     
-    <div *ngIf="isError" class="text-sm text-red-500 mt-1"> User already exists </div>
+    <div *ngIf="userExists" class="text-sm text-red-500 mt-1"> User already exists </div>
+    <div *ngIf="isError" class="text-sm text-red-500 mt-1"> Something went wrong on our end! </div>
     <div *ngIf="isSuccess" class="text-sm text-green-500 mt-1"> Signup successful! </div>
+
 
     <button type="submit" class ="mt-5 bg-primary py-3 rounded-md text-white  "(click)="submit()" [disabled] = "submissionNotReady()" [class.button-disabled]="submissionNotReady()">Submit</button>
 

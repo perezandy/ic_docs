@@ -3,8 +3,29 @@
         
     </head>
     <body class ="bg-secondary">
-        <header class="bg-primary p-4 text-white flex items-center justify-center">
+        <header class="bg-primary p-4 text-white flex justify-between"> 
+            <!--If you want to center div A and right align div B, you need to make an invisible copy of div B and place it before div A-->
+            <div class = "flex flex-row invisible"> 
+                <img
+                    class = "rounded-full mr-2"
+                    width = "35"
+                    height = "35"
+                    src = "assets/default_pfp.jpg"
+                
+                />
+                <p class ="text-2l">{{ getUser() }}</p> 
+            </div>
             <h1 class="text-2xl font-semibold">Iron Coder</h1>
+            <div class = "flex flex-row grow-0 items-center">
+                <img
+                    class = "rounded-full mr-2"
+                    width = "35"
+                    height = "35"
+                    src = "assets/default_pfp.jpg"
+                
+                />
+                <p class ="text-2l">{{ getUser() }}</p> 
+            </div>
         </header>
 
 

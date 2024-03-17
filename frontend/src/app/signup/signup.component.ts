@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 export class SignupComponent {
  
   isLoading = false;
+  userExists = false;
   isSuccess = false;
   isError = false;
   errorMessage = '';
@@ -74,20 +75,21 @@ export class SignupComponent {
       }),
     })
       .then((res) => {
-        if(res.status != 200){
-          this.isLoading = false;
-          this.isError = true;
+        if(res.status == 400){
+          this.userExists = true;
           console.log("FAILED SIGNUP");
         }
+        else if(res.status == 500){
+          console.log("INTERNAL SERVER ERROR")
+          this.isError = true;
+        }
         else{
-          console.log(res);
           console.log("SUCCESSFUL SIGNUP");
-          this.isLoading = false;
           this.isSuccess = true;
   
         }
         console.log(res);
-       
+        this.isLoading = false;
       })
       .catch((err) => {
         this.isLoading = false;
@@ -123,6 +125,7 @@ export class SignupComponent {
     this.passwordconfirm = "";
     this.show = true;
      
+    this.userExists = false;
     this.isLoading = false;
     this.isSuccess = false;
     this.isError = false;
@@ -130,6 +133,8 @@ export class SignupComponent {
   clearMessages(){
     this.isSuccess = false;
     this.isError = false;
+    this.userExists = false;
+
   }
 }
 
