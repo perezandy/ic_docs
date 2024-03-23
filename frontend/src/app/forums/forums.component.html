@@ -1,0 +1,95 @@
+<div class = "flex justify-between">
+
+    <div class="bg-primary text-white px-8 rounded-b-lg h-screen">
+        <h2 class="text-2xl font-bold mb-4">Forums</h2>
+        <div class = "flex flex-col gap-4">                
+            <p class="mt-80"><a routerLink="/home" class="hover:underline text-white-500">Back to Home</a></p>
+        </div>
+    </div>
+    
+
+
+    
+
+    
+    <div class = "bg-secondary flex-grow flex flex-col items-center py-4" >
+        <button mat-icon-button (click)="hide()">
+            <mat-icon>edit</mat-icon>
+        </button>
+
+        <div [hidden]="hidden">
+            <form
+            class="bg-accent md:p-4 flex flex-col w-11/12 max-w-lg group"
+            novalidate
+            action = "/createNewPost"
+            method="post"
+            [formGroup]="postForm">
+
+        
+            
+
+            <label for="header" class="mb-5">
+                <input
+                [(ngModel)]="header" 
+                type="text"
+                name="header"
+                id="header"
+                class="w-full bg-secondary p-3 mt-2 appearance-none outline-none text-neutral-800 peer invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+                placeholder="Header"
+                formControlName="headerControl"
+                required
+                />
+                <input
+                [(ngModel)]="body" 
+                type="text"
+                name="body"
+                id="body"
+                class="w-full bg-secondary p-3 mt-2 appearance-none outline-none text-neutral-800 peer invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
+                placeholder="Body"
+                formControlName="bodyControl"
+                required
+                />
+            </label>
+
+            <button (click)="submit()" type="submit" class ="w-auto  bg-primary py-3 w-auto rounded-md text-white group-invalid:pointer-events-none group-invalid:opacity-30" >Post</button>
+
+            </form>
+        </div>
+
+    
+        <div class="w-full bg-primary border-t border-neutral-300 my-5 items-center justify-center"></div>
+        <div class="flex flex-col" *ngFor="let post of recentPosts">
+        
+
+            <div class="px-16 py-8 flex flex-col overflow-hidden" style="width:900px"> <!--Div for each message-->
+                <div class="w-full truncate">
+                    <h3 class="bg-tertiary text-white px-2">{{ post.header }}</h3>
+                    <p class="bg-accent text-black px-2 py-2 truncate">{{ post.text }}</p>
+                </div>
+                <div class="bg-accent flex flex-row">
+                    <mat-icon class="text-m">chat</mat-icon> <!--TODO: Replace with get replies()-->
+                    <p class="text-m">0</p>
+                    <mat-icon class="text-m">thumbs_up_down</mat-icon> <!--TODO: Replace with get likes()-->
+                    <p class="text-m">0</p>
+                </div>
+            </div>
+            
+          
+        </div>
+        
+        <div *ngIf = "!recentPosts || recentPosts.length === 0">
+            <p>No messages found</p>
+        </div>
+      
+    </div>
+
+
+
+
+    
+
+    <div class="bg-primary text-white px-8 rounded-b-lg h-screen">
+        <h2 class="text-2xl font-bold mb-4">Top Users</h2>
+    </div>
+
+</div>

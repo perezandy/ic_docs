@@ -4,12 +4,13 @@ import { Router, RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { HomepageComponent } from './homepage/homepage.component';
 import { NotfoundComponent } from './notfound/notfound.component';
-import { Step1Component } from './step1/step1.component';
-import { Step2Component } from './step2/step2.component';
-import { Step3Component } from './step3/step3.component';
+import { Step1Component } from './projecttutorial/step1/step1.component';
+import { Step2Component } from './projecttutorial/step2/step2.component';
+import { Step3Component } from './projecttutorial/step3/step3.component';
 import { BoardtutorialComponent } from './boardtutorial/boardtutorial.component';
-import { SignupComponent } from './signup/signup.component';
-import { LoginComponent } from './login/login.component';
+import { SignupComponent } from './authentication/signup/signup.component';
+import { LoginComponent } from './authentication/login/login.component';
+import { ForumsComponent } from './forums/forums.component';
 
 /* Custom Components */
 
@@ -53,6 +54,10 @@ const routes: Routes = [
   {
     component: SignupComponent,
     path: 'signup',
+  },
+  { 
+    path: 'forums', 
+    component: ForumsComponent,
   },
   { 
     path: '**', 

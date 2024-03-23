@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const env = require('dotenv').config();
 
+const multer = require('multer'); // for file upload
+
 const app = express();
 const PORT = 3000;
 
@@ -34,17 +36,9 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 
-//define schema for messages
-const messageSchema = new mongoose.Schema({
-  text: { type: String, required: true },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
-  rating: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now },
-});
-const Message = mongoose.model('Message', messageSchema);
-module.exports = Message;
 
+
+/*------------------------------------------------- Authentication Functions -------------------------------------------------*/
 
 app.post('/signup', async (req, res) => {
   const { email, username, password } = req.body;
@@ -91,12 +85,37 @@ app.post('/login', async (req, res) => {
     }
 });
 
+/*------------------------------------------------- Message Functions -------------------------------------------------*/
 
-app.post('/createNewPost', async (req, res) => {
-  const { content, userId } = req.body;
+const upload = multer({ // Define maximum attachment length
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB 
+  },
+});
+
+
+
+const messageSchema = new mongoose.Schema({ // define schema for messages - includes an array of replies
+  header: { type: String, required: true },
+  text: { type: String, required: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
+  rating: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
+  attachment: { type: String } // 
+});
+const Message = mongoose.model('Message', messageSchema);
+module.exports = Message;
+
+
+
+
+app.post('/createNewPost', upload.single('attachment'), async (req, res) => {
+  const { header, text, user } = req.body;
+  const attachmentPath = req.file ? req.file.path : null;
 
   try {
-    const newPost = new Message({ content, user: userId });
+    const newPost = new Message({ header, text, user, attachment: attachmentPath });
     await newPost.save();
     res.status(201).json({ message: 'Post created successfully', post: newPost });
   } catch (error) {
@@ -106,30 +125,59 @@ app.post('/createNewPost', async (req, res) => {
 });
 
 
-app.post('/replyToPost/:postId', async (req, res) => {
+
+app.post('/replyToPost/:postId', upload.single('attachment'), async (req, res) => {
+  const postId = req.params.postId;
   const { content, userId } = req.body;
-  const { postId } = req.params;
 
   try {
+
     const parentPost = await Message.findById(postId);
     if (!parentPost) {
       return res.status(404).json({ message: 'Parent post not found' });
     }
 
-    const reply = new Message({ content, user: userId });
-    await reply.save();
+   
+    const newReply = new Message({
+      content,
+      user: userId,
+      attachment: req.file ? req.file.path : null, 
+      parentPost: postId,
+    });
 
-    parentPost.replies.push(reply);
-    await parentPost.save();
-
-    res.status(201).json({ message: 'Reply posted successfully', reply });
+    await newReply.save();
+    res.status(201).json({ message: 'Reply created successfully', reply: newReply });
   } catch (error) {
-    console.error('Error replying to post:', error);
+    console.error('Error creating reply:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/recent-posts', async (req, res) => { // get 5 most recent messages
+  try {
+    const recentPosts = await Message.find({ replies: { $size: 0 } }).sort({ createdAt: -1 }).limit(5); 
+    res.status(200).json(recentPosts);
+
+  } catch (error) {
+    console.error('Error fetching recent posts:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 
+app.get('/posts/:postId', async (req, res) => { // get specific messages by postids - will come in useful for replies
+  try {
+    const postId = req.params.postId;
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    res.status(200).json(post);
+  } catch (error) {
+    console.error('Error retrieving post:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 

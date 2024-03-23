@@ -43,7 +43,7 @@ export class LoginComponent {
 
 
   submit() {    
-    fetch('http://localhost:3000/login', { // TODO: Replace with URL of API login() function
+    fetch('http://localhost:3000/login', { 
       headers: {
         'content-type': ' application/json',
       },

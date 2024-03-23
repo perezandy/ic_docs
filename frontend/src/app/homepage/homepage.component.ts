@@ -9,19 +9,17 @@ import * as jwt_decode from 'jwt-decode';
 export class HomepageComponent {
  
   getUser() : string {
-  const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-  if(token === null){
-    return 'Guest';
-  }
-  
-  const payload = token.split('.')[1];
-  const decodedPayload = atob(payload);
+    if(token === null){
+      return 'Guest';
+    }
 
-  const JSONpayload = JSON.parse(decodedPayload);
-
-  return JSONpayload.username;
-
+    const payload = token.split('.')[1];
+    const decodedPayload = atob(payload);
+    const JSONpayload = JSON.parse(decodedPayload);
+    
+    return JSONpayload.username;
  }
 
 
