@@ -11,6 +11,7 @@ import { BoardtutorialComponent } from './boardtutorial/boardtutorial.component'
 import { SignupComponent } from './authentication/signup/signup.component';
 import { LoginComponent } from './authentication/login/login.component';
 import { ForumsComponent } from './forums/forums.component';
+import { MessageComponent } from './forums/message/message.component';
 
 /* Custom Components */
 
@@ -60,9 +61,13 @@ const routes: Routes = [
     component: ForumsComponent,
   },
   { 
+    path: 'messages/:id', component: MessageComponent 
+  },
+  { 
     path: '**', 
     component: NotfoundComponent,
   },
+  
   
 ];
 @NgModule({

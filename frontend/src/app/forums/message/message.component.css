@@ -1,0 +1,15 @@
+main-post-container{
+    width: 100%; 
+    word-wrap: break-word; 
+    overflow-wrap: break-word; 
+    white-space: pre-line; 
+}
+
+.vertical-line {
+    position: relative;
+    top: 0;
+    left: 15px; 
+    width: 2px;
+    height: 100%; 
+    background-color: #ccc; 
+  }

@@ -1,0 +1,115 @@
+<div class = "flex flex-col h-screen">
+
+    <header class="bg-primary p-4 text-white flex justify-between font-custom"> 
+        <!--If you want to center div A and right align div B, you need to make an invisible copy of div B and place it before div A-->
+        <h1 class="text-2xl font-semibold">Forums</h1>
+        
+        <div class = "flex flex-row grow-0 items-center justify-center">
+            
+            <button mat-icon-button class="text-2xl">
+                <mat-icon class="py-1">back</mat-icon>
+            </button>
+
+            <button mat-icon-button [routerLink]="['/home']" class="px-4 text-2xl">
+                <mat-icon class="py-1">home</mat-icon>
+            </button>
+            
+
+            <img
+                class = "rounded-full mr-2"
+                width = "35"
+                height = "35"
+                src = "assets/default_pfp.jpg"
+            
+            />
+            <p class ="text-2l">{{ getUser() }}</p>
+
+        </div>
+    </header>
+
+    <div class="px-60 py-4 flex flex-row">
+        <div class="border-l-2 border-tertiary h-100vh"></div>
+        <div class="main-post-container ">        
+            
+            <div class="border-r-2 border-t-2 border-b-2 px-8 py-4">
+                
+                <div class ="flex flex-row">
+                    <!--TODO: Add user images -->
+                    <!--img = postArray[0].post.user.img-->
+                    <p class="text-sm text-gray-500">{{ post.user.username }}</p>
+                </div>
+
+
+                <h3 style="font-size: 32px">{{ post.header }}</h3>
+                <p>{{ post.text }}</p>
+            
+                
+
+                <button mat-icon-button (click)="toggleBox(post)" class="flex flex-row gap-2">
+                    <mat-icon>reply</mat-icon>
+                </button>
+
+            </div>
+
+            <div [hidden]="!booleanMap.get(post._id)" class="w-96 py-2 px-8" >
+                <div class="relative w-full min-w-[600px]">
+                <textarea [(ngModel)]="replyText"
+                    class="peer h-full min-h-[100px] w-full resize border border-2 bg-transparent px-3 py-2.5 text-sm "
+                    placeholder=""></textarea>
+                </div>
+                <button type="submit" class ="bg-primary rounded-md text-white px-2 py-2" (click)="reply(post,replyText)" >Reply</button>
+            </div>
+
+            <div class="px-8 py-4"> 
+                <ng-container *ngTemplateOutlet="displayPost; context: { children: post.replies, i: 1 }"></ng-container>
+            </div>
+            
+           
+
+            <ng-template #displayPost let-children="children" let-i="i"> <!-- START RECURSIVE DISPLAY OF REPLIES -->
+                <div class="flex flex-row">
+                    <div class="border-l-2 border-primary h-auto"></div>
+                    <div class ="flex flex-col">
+                        <div *ngFor="let child of children; let j = index;">
+                            <div class="border-r-2 border-t-2 border-b-2 px-8 w-96">
+                                <div>
+                                    <div class ="flex flex-row">
+                                        <!--TODO: Add user images -->
+                                        <!--img = postArray[0].post.user.img-->
+                                        <p class="text-sm text-gray-500">{{ child.user.username }}</p>
+                                    </div>
+                                    <p>{{ child.text }}</p>
+                        
+                                    <button mat-icon-button (click)="toggleBox(child)" class="flex flex-row gap-2">
+                                        <mat-icon>reply</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div [hidden]="!booleanMap.get(child._id)" class="w-96 py-2 px-8" >
+                                <div class="relative w-full min-w-[600px]">
+                                <textarea [(ngModel)]="replyText"
+                                    class="peer h-full min-h-[100px] w-full resize border border-2 bg-transparent px-3 py-2.5 text-sm "
+                                    placeholder=""></textarea>
+                                </div>
+                                <button type="submit" class ="bg-primary rounded-md text-white px-2 py-2" (click)="reply(child,replyText)" >Reply</button>
+                            </div>
+
+                            <div class = "py-4"></div>
+
+                            <div *ngIf="child.replies && child.replies.length > 0" class="px-8 py-2 flex flex-col">
+                                <ng-container *ngTemplateOutlet="displayPost; context: { children: child.replies, i: i + 1  }"></ng-container>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </ng-template>
+
+
+        </div>
+    </div>
+
+
+   
+
+</div>

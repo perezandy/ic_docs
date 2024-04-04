@@ -115,9 +115,12 @@ app.post('/createNewPost', upload.single('attachment'), async (req, res) => {
   const attachmentPath = req.file ? req.file.path : null;
 
   try {
+  
     const newPost = new Message({ header, text, user, attachment: attachmentPath });
     await newPost.save();
+
     res.status(201).json({ message: 'Post created successfully', post: newPost });
+    
   } catch (error) {
     console.error('Error creating post:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -127,8 +130,13 @@ app.post('/createNewPost', upload.single('attachment'), async (req, res) => {
 
 
 app.post('/replyToPost/:postId', upload.single('attachment'), async (req, res) => {
+
+
+
   const postId = req.params.postId;
-  const { content, userId } = req.body;
+  const { text, user } = req.body;
+  const attachmentPath = req.file ? req.file.path : null;
+  const header = " "
 
   try {
 
@@ -137,27 +145,25 @@ app.post('/replyToPost/:postId', upload.single('attachment'), async (req, res) =
       return res.status(404).json({ message: 'Parent post not found' });
     }
 
-   
-    const newReply = new Message({
-      content,
-      user: userId,
-      attachment: req.file ? req.file.path : null, 
-      parentPost: postId,
-    });
+    const newPost = new Message({ header, text, user, attachment: attachmentPath });
+    await newPost.save();
 
-    await newReply.save();
-    res.status(201).json({ message: 'Reply created successfully', reply: newReply });
+    parentPost.replies.push(newPost);
+    await parentPost.save();
+
+    res.status(201).json({ message: 'Post created successfully', post: newPost });
   } catch (error) {
-    console.error('Error creating reply:', error);
+    console.error('Error creating post:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
+
+  
 });
 
-app.get('/recent-posts', async (req, res) => { // get 5 most recent messages
+app.get('/recent-posts', async (req, res) => {
   try {
-    const recentPosts = await Message.find({ replies: { $size: 0 } }).sort({ createdAt: -1 }).limit(5); 
+    const recentPosts = await Message.find({ header: { $ne: " " } }).sort({ createdAt: -1 }).limit(5);
     res.status(200).json(recentPosts);
-
   } catch (error) {
     console.error('Error fetching recent posts:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -165,13 +171,33 @@ app.get('/recent-posts', async (req, res) => { // get 5 most recent messages
 });
 
 
-app.get('/posts/:postId', async (req, res) => { // get specific messages by postids - will come in useful for replies
+async function populateAllReplies(message) { //populate all replies of a message recursively
+  await message.populate('replies');
+  await message.populate({
+    path: 'user',
+    select: 'username'
+  });
+
+  for (const reply of message.replies) {
+    await populateAllReplies(reply);
+  }
+}
+
+app.get('/posts/:postId', async (req, res) => { // get specific messages by postids and recursively populate all replies
+ 
+
   try {
     const postId = req.params.postId;
-    const post = await Post.findById(postId);
+    const post = await Message.findById(postId).populate({
+      path: 'user',
+      select: 'username'
+    });
+
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
+
+    await populateAllReplies(post);
     res.status(200).json(post);
   } catch (error) {
     console.error('Error retrieving post:', error);

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PfpComponent } from './pfp.component';
+import { MessageComponent } from './message.component';
 
-describe('PfpComponent', () => {
-  let component: PfpComponent;
-  let fixture: ComponentFixture<PfpComponent>;
+describe('MessageComponent', () => {
+  let component: MessageComponent;
+  let fixture: ComponentFixture<MessageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PfpComponent]
+      declarations: [MessageComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(PfpComponent);
+    fixture = TestBed.createComponent(MessageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

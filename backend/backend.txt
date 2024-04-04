@@ -1,19 +1,21 @@
 install necessary packages:
 
-
-npm i express
-npm i hbs
-npm i mongoose
-npm i nodemon
-npm i express body-parser
-npm i dotenv
-
+cd backend
+npm i 
 npx nodemon index.js
 
 
-
-
+cd frontend 
+npm i
+ng serve
 
 to run tests in the frontend:
 
-npx cypress open
+    npx cypress open
+
+
+
+To build and deploy:
+
+    ng build --base-href "https://perezandy.github.io/ic_docs/"
+    npx angular-cli-ghpages --dir=dist/ic-docs-angular/browser/

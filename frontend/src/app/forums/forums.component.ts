@@ -84,6 +84,19 @@ export class ForumsComponent {
         console.error('Error fetching recent posts:', error);
       });
   }
+  getUser() : string {
+    const token = localStorage.getItem('token');
+
+    if(token === null){
+      return 'Guest';
+    }
+
+    const payload = token.split('.')[1];
+    const decodedPayload = atob(payload);
+    const JSONpayload = JSON.parse(decodedPayload);
+    
+    return JSONpayload.username;
+ }
 
 
 

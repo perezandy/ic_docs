@@ -15,9 +15,10 @@ import { LoginComponent } from './authentication/login/login.component';
 import { SignupComponent } from './authentication/signup/signup.component';
 import { ForgotComponent } from './authentication/forgot/forgot.component';
 import { Rp2040Component } from './rp2040/rp2040.component';
-import { PfpComponent } from './pfp/pfp.component';
 import { ForumsComponent } from './forums/forums.component';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MessageComponent } from './forums/message/message.component';
 
 
 @NgModule({
@@ -34,8 +35,8 @@ import { MatIconModule } from '@angular/material/icon';
     ForgotComponent,
     BoardtutorialComponent,
     Rp2040Component,
-    PfpComponent,
     ForumsComponent,
+    MessageComponent,
 
   ],
   imports: [
@@ -43,7 +44,8 @@ import { MatIconModule } from '@angular/material/icon';
     ReactiveFormsModule,
     AppRoutingModule,
     BrowserModule,
-    MatIconModule
+    MatIconModule,
+    MatPaginatorModule
 
 
   ],
