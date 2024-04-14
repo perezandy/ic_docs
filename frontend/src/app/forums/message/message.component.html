@@ -2,7 +2,7 @@
 
     <header class="bg-primary p-4 text-white flex justify-between font-custom"> 
         <!--If you want to center div A and right align div B, you need to make an invisible copy of div B and place it before div A-->
-        <h1 class="text-2xl font-semibold">Forums</h1>
+        <h1 class="text-2xl font-semibold cursor-pointer" [routerLink]="['/forums']">Forums</h1>
         
         <div class = "flex flex-row grow-0 items-center justify-center">
             
@@ -27,16 +27,21 @@
         </div>
     </header>
 
-    <div class="px-60 py-4 flex flex-row">
+    <div *ngIf="isLoading" class="loader">
+        <mat-spinner [diameter]="50" color="warn"></mat-spinner>
+    </div>
+
+    <div class="px-60 py-4 flex flex-row" *ngIf="!isLoading">
         <div class="border-l-2 border-tertiary h-100vh"></div>
         <div class="main-post-container ">        
             
             <div class="border-r-2 border-t-2 border-b-2 px-8 py-4">
                 
-                <div class ="flex flex-row">
+                <div class ="flex flex-row justify-between">
                     <!--TODO: Add user images -->
-                    <!--img = postArray[0].post.user.img-->
-                    <p class="text-sm text-gray-500">{{ post.user.username }}</p>
+                    <p class="text-m text-tertiary">{{ post.user.username }}</p>
+                    <p class ="text-sm text-tertiary">{{ post.createdAt | time }} </p>
+
                 </div>
 
 
@@ -45,9 +50,18 @@
             
                 
 
-                <button mat-icon-button (click)="toggleBox(post)" class="flex flex-row gap-2">
-                    <mat-icon>reply</mat-icon>
-                </button>
+                <div class="flex flex-row gap-2">
+                    <button mat-icon-button (click)="likePost(post)" class="flex flex-row" [ngClass]="{ 'liked': likedByUser(post) }">
+                        <mat-icon [ngStyle]="{ 'color': likedByUser(post) ? '#ef4444' : '#6b7280' }">thumb_up_off_alt</mat-icon>
+                        <p class="text-m" [ngClass]="{ 'text-primary': likedByUser(post), 'text-tertiary': !likedByUser(post) }">{{ post.likedby.length }}</p>
+                    </button>
+                
+                    <button mat-icon-button (click)="toggleBox(post)" class="flex flex-row">
+                        <mat-icon [ngStyle]="{ 'color': '#6b7280' }">reply</mat-icon>
+                    </button>
+                </div>
+
+              
 
             </div>
 
@@ -73,16 +87,28 @@
                         <div *ngFor="let child of children; let j = index;">
                             <div class="border-r-2 border-t-2 border-b-2 px-8 w-96">
                                 <div>
-                                    <div class ="flex flex-row">
+                                    <div class ="flex flex-row justify-between">
                                         <!--TODO: Add user images -->
-                                        <!--img = postArray[0].post.user.img-->
-                                        <p class="text-sm text-gray-500">{{ child.user.username }}</p>
+                                        <!--img = post.user.img-->
+                                        <p class="text-m  text-tertiary">{{ child.user.username }}</p>
+                                        <p class ="text-sm text-tertiary">{{ child.createdAt | time }} </p>
+
                                     </div>
                                     <p>{{ child.text }}</p>
                         
-                                    <button mat-icon-button (click)="toggleBox(child)" class="flex flex-row gap-2">
-                                        <mat-icon>reply</mat-icon>
-                                    </button>
+
+
+                                    <div class="flex flex-row gap-2">
+                                        <button mat-icon-button (click)="likePost(child)" class="flex flex-row" [ngClass]="{ 'liked': likedByUser(child) }">
+                                            <mat-icon [ngStyle]="{ 'color': likedByUser(child) ? '#ef4444' : '#6b7280' }">thumb_up_off_alt</mat-icon>
+                                            <p class="text-m" [ngClass]="{ 'text-primary': likedByUser(child), 'text-tertiary': !likedByUser(child) }">{{ child.likedby.length }}</p>
+                                        </button>
+                                    
+                                        <button mat-icon-button (click)="toggleBox(child)" class="flex flex-row">
+                                            <mat-icon [ngStyle]="{ 'color': '#6b7280' }">reply</mat-icon>
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                             <div [hidden]="!booleanMap.get(child._id)" class="w-96 py-2 px-8" >
@@ -91,7 +117,7 @@
                                     class="peer h-full min-h-[100px] w-full resize border border-2 bg-transparent px-3 py-2.5 text-sm "
                                     placeholder=""></textarea>
                                 </div>
-                                <button type="submit" class ="bg-primary rounded-md text-white px-2 py-2" (click)="reply(child,replyText)" >Reply</button>
+                                <button type="submit" class ="bg-primary rounded-md text-white px-2 py-2" (click)="toggleBox(child); reply(child,replyText); " >Reply</button>
                             </div>
 
                             <div class = "py-4"></div>

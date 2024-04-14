@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
-
+import { DatePipe } from '@angular/common';
+import { MatPaginator,PageEvent } from '@angular/material/paginator';
 
 
 
@@ -16,6 +17,15 @@ export class ForumsComponent {
   hidden: boolean = true;
   recentPosts: any[] = [];
 
+  postsPerPage : number = 5;
+  totalPosts : number = 100;
+  currentPage: number = 1;
+
+
+  constructor(private datePipe: DatePipe) { }
+
+
+
   public postForm : FormGroup = new FormGroup({
     'headerControl' : new FormControl('',[Validators.required]),
     'bodyControl' : new FormControl('' , [Validators.required])
@@ -23,6 +33,9 @@ export class ForumsComponent {
 
   ngOnInit(): void {
     this.getRecentMessages();
+  }
+  formatDate(date: string): string {
+    return this.datePipe.transform(date, 'medium')!; 
   }
 
 
@@ -69,20 +82,26 @@ export class ForumsComponent {
   }
 
   getRecentMessages(): void {
-    fetch('http://localhost:3000/recent-posts')
+    fetch(`http://localhost:3000/recent-posts?page=${this.currentPage}&limit=${this.postsPerPage}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch recent posts');
         }
-        
         return response.json();
       })
-      .then((posts: any[]) => {
-        this.recentPosts = posts;
+      .then((data: any) => {
+        this.recentPosts = data.posts;
+        this.totalPosts = data.totalPosts;
       })
       .catch(error => {
         console.error('Error fetching recent posts:', error);
       });
+  }
+
+  pageChanged(event: PageEvent): void {
+    this.currentPage = event.pageIndex + 1;
+    this.postsPerPage = event.pageSize;
+    this.getRecentMessages();
   }
   getUser() : string {
     const token = localStorage.getItem('token');
@@ -96,7 +115,27 @@ export class ForumsComponent {
     const JSONpayload = JSON.parse(decodedPayload);
     
     return JSONpayload.username;
- }
+  }
+
+  likedByUser(msg: any): boolean {
+    const token = localStorage.getItem('token');
+    if (token === null) {
+      return false; 
+    }
+    
+    const payload = token.split('.')[1];
+    const decodedPayload = atob(payload);
+    const JSONpayload = JSON.parse(decodedPayload);
+    const userId = JSONpayload.userId;
+    
+    
+    if (msg.likedby && msg.likedby.includes(userId)) {
+      return true; // User has already liked the message
+    } 
+    return false;
+  }
+
+
 
 
 

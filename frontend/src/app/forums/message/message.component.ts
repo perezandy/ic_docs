@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DatePipe } from '@angular/common';
 
 
 
@@ -12,6 +14,7 @@ export class MessageComponent implements OnInit {
   
   booleanMap: Map<any, boolean> = new Map(); //For storing a boolean for each message
 
+  isLoading: boolean = true;
   messageId!: string;
   replyText!: string;
   attachment: File | null = null;
@@ -19,7 +22,7 @@ export class MessageComponent implements OnInit {
 
   post: any;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -44,6 +47,7 @@ export class MessageComponent implements OnInit {
         //we will quickly eat up memory if we redundantly store parts of the tree.
         this.booleanMap.set(this.post._id, false);
         this.initializeBooleanMap();
+        this.isLoading = false;
 
 
 
@@ -83,14 +87,14 @@ export class MessageComponent implements OnInit {
     if (token === null) {
       return; // TODO: Give error code/ JWT expiration
     }
-
+  
     const payload = token.split('.')[1];
     const decodedPayload = atob(payload);
     const JSONpayload = JSON.parse(decodedPayload);
-
+  
     const postId = post._id;
     const userId = JSONpayload.userId;
-
+  
     fetch(`http://localhost:3000/replyToPost/${postId}`, { 
       headers: {
         'Content-Type': 'application/json',
@@ -105,6 +109,22 @@ export class MessageComponent implements OnInit {
     .then(response => {
       if (response.status === 201) {
         console.log('Reply created successfully');
+        // Fetch the updated parent post after creating the reply
+        fetch(`http://localhost:3000/posts/${postId}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch updated post');
+            }
+            return response.json();
+          })
+          .then(updatedPost => {
+            // Update the original post with the data from the updated post
+            Object.assign(post, updatedPost);
+            console.log('Parent post updated successfully:', updatedPost);
+          })
+          .catch(error => {
+            console.error('Error fetching updated post:', error);
+          });
       } else if (response.status === 500) {
         console.log('Internal Server Error');
       } else {
@@ -114,6 +134,65 @@ export class MessageComponent implements OnInit {
     .catch(error => {
       console.error('Error creating reply:', error);
     });
+  }
+
+  likePost(post: any): void {
+    const token = localStorage.getItem('token');
+    if (token === null) {
+        return; // TODO: Give error code/ JWT expiration
+    }
+  
+    const payload = token.split('.')[1];
+    const decodedPayload = atob(payload);
+    const JSONpayload = JSON.parse(decodedPayload);
+  
+    const userId = JSONpayload.userId;
+    const postId = post._id;
+  
+    fetch(`http://localhost:3000/liked-post/${postId}`, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({
+            userId: userId,
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to like/unlike post');
+        }
+        return response.json();
+    })
+    .then(updatedPostData => {
+        // Update the post with the data from the backend
+        post.likedby = updatedPostData.post.likedby;
+    })
+    .catch(error => {
+        console.error('Error toggling like:', error);
+    });
+  }
+  
+  likedByUser(msg: any): boolean {
+    const token = localStorage.getItem('token');
+    if (token === null) {
+      return false; 
+    }
+    
+    const payload = token.split('.')[1];
+    const decodedPayload = atob(payload);
+    const JSONpayload = JSON.parse(decodedPayload);
+    const userId = JSONpayload.userId;
+    
+    
+    if (msg.likedby && msg.likedby.includes(userId)) {
+      return true; // User has already liked the message
+    } 
+    return false;
+  }
+
+  formatDate(date: string): string {
+    return this.datePipe.transform(date, 'medium')!; 
   }
 
 

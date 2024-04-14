@@ -19,6 +19,9 @@ import { ForumsComponent } from './forums/forums.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MessageComponent } from './forums/message/message.component';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { DatePipe } from '@angular/common';
+import { TimePipe } from './time.pipe';
 
 
 @NgModule({
@@ -37,6 +40,7 @@ import { MessageComponent } from './forums/message/message.component';
     Rp2040Component,
     ForumsComponent,
     MessageComponent,
+    TimePipe,
 
   ],
   imports: [
@@ -45,11 +49,13 @@ import { MessageComponent } from './forums/message/message.component';
     AppRoutingModule,
     BrowserModule,
     MatIconModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatProgressSpinner
 
 
   ],
   providers: [
+    DatePipe,
     provideAnimationsAsync()
   ],
   schemas: [

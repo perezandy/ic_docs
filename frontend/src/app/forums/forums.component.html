@@ -77,20 +77,27 @@
 
         
             <div class="w-full bg-primary border-t border-neutral-300 my-5 items-center justify-center"></div>
-            <div class="flex flex-col" *ngFor="let post of recentPosts">
+            <div class="flex flex-col cursor-pointer" *ngFor="let post of recentPosts">
             
 
-                <div class="px-16 py-4 flex flex-col overflow-hidden" style="width:900px" [routerLink]="'/messages/' + post._id"> <!--Div for each message-->
+                <div class="px-16 py-4 flex flex-col overflow-hidden opacity-100 hover:opacity-50" style="width:900px" [routerLink]="'/messages/' + post._id" > <!--Div for each message-->
                     <div class="w-full truncate">
                         <h3 class="bg-tertiary text-white px-2">{{ post.header }}</h3>
                         <p class="bg-accent text-black px-2 py-2 truncate">{{ post.text }}</p>
                     </div>
-                    <div class="bg-accent flex flex-row">
-                        <mat-icon class="text-m">chat</mat-icon> <!--TODO: Replace with get replies()-->
-                        <p class="text-m">0</p>
-                        <mat-icon class="text-m">thumbs_up_down</mat-icon> <!--TODO: Replace with get likes()-->
-                        <p class="text-m">0</p>
+
+                    <div class="bg-accent flex flex-row justify-between">
+                        <div class="flex flex-row">   
+                            <mat-icon [ngStyle]="{ 'color': likedByUser(post) ? '#ef4444' : '#6b7280' }">thumb_up_off_alt</mat-icon>
+                            <p class="text-m" [ngClass]="{ 'text-primary': likedByUser(post), 'text-tertiary': !likedByUser(post) }">{{ post.likedby.length }}</p>
+                        </div>            
+                        <p class ="text-m text-tertiary">{{ post.createdAt | time }} </p>
                     </div>
+           
+
+
+
+
                 </div>
                 
             
@@ -106,12 +113,13 @@
 
     
     <mat-paginator 
-        [length]="100"
-        [pageSize]="5"
+        [length]="totalPosts"
+        [pageSize]="postsPerPage"
+        [pageIndex]="currentPage - 1"
         aria-label="Select page"
-        [hidePageSize]="true"
-        [pageIndex]="0"
-        [showFirstLastButtons]="true">
+        [showFirstLastButtons]="true"
+        [pageSizeOptions]="[5,10,15,20]"
+        (page)="pageChanged($event)">
     </mat-paginator>
     
 

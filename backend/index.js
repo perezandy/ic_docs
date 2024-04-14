@@ -100,7 +100,7 @@ const messageSchema = new mongoose.Schema({ // define schema for messages - incl
   text: { type: String, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
-  rating: { type: Number, default: 0 },
+  likedby: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   createdAt: { type: Date, default: Date.now },
   attachment: { type: String } // 
 });
@@ -109,7 +109,7 @@ module.exports = Message;
 
 
 
-
+//Completely original post
 app.post('/createNewPost', upload.single('attachment'), async (req, res) => {
   const { header, text, user } = req.body;
   const attachmentPath = req.file ? req.file.path : null;
@@ -129,17 +129,14 @@ app.post('/createNewPost', upload.single('attachment'), async (req, res) => {
 
 
 
+//Replying to a post
 app.post('/replyToPost/:postId', upload.single('attachment'), async (req, res) => {
-
-
-
   const postId = req.params.postId;
   const { text, user } = req.body;
   const attachmentPath = req.file ? req.file.path : null;
-  const header = " "
+  const header = " ";
 
   try {
-
     const parentPost = await Message.findById(postId);
     if (!parentPost) {
       return res.status(404).json({ message: 'Parent post not found' });
@@ -151,19 +148,34 @@ app.post('/replyToPost/:postId', upload.single('attachment'), async (req, res) =
     parentPost.replies.push(newPost);
     await parentPost.save();
 
-    res.status(201).json({ message: 'Post created successfully', post: newPost });
+    // Fetch the parent post again to get the updated version
+    const updatedParentPost = await Message.findById(postId).populate('replies');
+    if (!updatedParentPost) {
+      return res.status(404).json({ message: 'Updated parent post not found' });
+    }
+
+    res.status(201).json({ message: 'Post created successfully', post: updatedParentPost });
   } catch (error) {
     console.error('Error creating post:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
-
-  
 });
 
 app.get('/recent-posts', async (req, res) => {
   try {
-    const recentPosts = await Message.find({ header: { $ne: " " } }).sort({ createdAt: -1 }).limit(5);
-    res.status(200).json(recentPosts);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    const [recentPosts, totalPosts] = await Promise.all([
+      Message.find({ header: { $ne: " " } })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Message.countDocuments({ header: { $ne: " " } }) // Get total count
+    ]);
+
+    res.status(200).json({ posts: recentPosts, totalPosts });
   } catch (error) {
     console.error('Error fetching recent posts:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -177,15 +189,20 @@ async function populateAllReplies(message) { //populate all replies of a message
     path: 'user',
     select: 'username'
   });
+  if (!message.user) {
+    message.user = { _id: null, username: '[deleted]' }; 
+  }
+
 
   for (const reply of message.replies) {
     await populateAllReplies(reply);
+    if (!reply.user) {
+      reply.user = { _id: null, username: '[deleted]' }; 
+    }
   }
 }
 
 app.get('/posts/:postId', async (req, res) => { // get specific messages by postids and recursively populate all replies
- 
-
   try {
     const postId = req.params.postId;
     const post = await Message.findById(postId).populate({
@@ -205,6 +222,52 @@ app.get('/posts/:postId', async (req, res) => { // get specific messages by post
   }
 });
 
+/*------------------------------------------------- Liking Posts -------------------------------------------------*/
+app.post('/liked-post/:postId', async (req, res) => { // Allows user to like the post - acts as a toggle
+  const { postId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const post = await Message.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    const userIndex = post.likedby.indexOf(userId);
+    if (userIndex === -1) {
+      post.likedby.push(userId);
+    } 
+    else {
+      post.likedby.splice(userIndex, 1);
+    }
+    
+    
+    const updatedPost = await post.save();
+    res.status(200).json({ message: 'Post like toggled successfully', post: updatedPost });
+  } 
+  catch (error) {
+    console.error('Error toggling like:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.get('/likedbyuser/:postId/:userId', async (req, res) => { // Returns true or false if user has liked post
+  try {
+    const postId = req.params.postId;
+    const userId = req.params.userId;
+
+    const post = await Message.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const isLikedByUser = post.likedby.includes(userId);
+    res.status(200).json({ liked: isLikedByUser });
+  } catch (error) {
+    console.error('Error checking if post is liked by user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 app.listen(PORT, () => {
